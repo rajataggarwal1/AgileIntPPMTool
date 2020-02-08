@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agileintelligence.ppmtool.domain.Project;
+import com.agileintelligence.ppmtool.services.MapValidationErrorService;
 import com.agileintelligence.ppmtool.services.ProjectService;
 
 @RestController
@@ -25,27 +26,21 @@ public class ProjectController {
 	@Autowired
 	private ProjectService projectService;
 	
+	@Autowired
+	MapValidationErrorService mapValidationErrorService;
+	
 	@PostMapping("")
 			public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result)
 			{// <?> define means any type of return object either ResonSe entity of project type or string type
 		// @valid anotation is for enableing validation which introduced in Project entity
 		// Binding result contain the result message came from backend
-				if(result.hasErrors())
-				{
-					// Logic to map the error in show properly in the Json response
-					Map<String, String> errorMap=new HashMap<>();					
-					for(FieldError error:result.getFieldErrors())
-					{
-						errorMap.put(error.getField(), error.getDefaultMessage());
-					}
-					// Returing the map
-					return new ResponseEntity<Map<String, String>>(errorMap , HttpStatus.BAD_REQUEST);
-					
-					
-					// Below request is returing string
-//					return new ResponseEntity<String>("Invalid Project Request" , HttpStatus.BAD_REQUEST);
-					
-				}
+				
+				ResponseEntity<?> errorMap=mapValidationErrorService.MapValidationService(result);
+				
+				if(errorMap !=null)
+					return errorMap;
+		
+		
 				Project project1=projectService.saveOrUpdateProject(project);
 				return new ResponseEntity<Project>(project,HttpStatus.CREATED);
 		
