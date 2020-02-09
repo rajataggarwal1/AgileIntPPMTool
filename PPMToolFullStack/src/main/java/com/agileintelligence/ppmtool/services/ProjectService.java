@@ -13,8 +13,9 @@ public class ProjectService {
 	@Autowired
 	private ProjectRepository projectRepository;
 	
-	// store project in the database
-	public Project  saveOrUpdateProject(Project project)
+	// Saving and updating project in the database. It will save it does not exist and update if exist
+	// We will pass id
+	public Project saveOrUpdateProject(Project project)
 	{
 		try {
 			project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
@@ -57,4 +58,6 @@ public class ProjectService {
 		
 		projectRepository.delete(project);
 	}
+	
+	
 }
