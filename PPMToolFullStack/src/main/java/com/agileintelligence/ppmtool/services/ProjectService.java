@@ -13,6 +13,7 @@ public class ProjectService {
 	@Autowired
 	private ProjectRepository projectRepository;
 	
+	// store project in the database
 	public Project  saveOrUpdateProject(Project project)
 	{
 		try {
@@ -27,6 +28,7 @@ public class ProjectService {
 		
 	}
 	
+	// Get one project based on project id
 	public Project findbyProjectIdentifier(String projectId)
 	{
 		
@@ -39,8 +41,20 @@ public class ProjectService {
 		return project;
 	}
 	
+	// Find all project return all project
 	public Iterable<Project> findAllProjects()
 	{
 		return projectRepository.findAll();		
+	}
+	
+	// Deleting project based on ID
+	public void deleteProjectByIdentifier(String projectId)
+	{
+		Project project=projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+		
+		if(project == null)
+			throw new ProjectIdException("Can not delete project  "+ projectId + " does not Exist.");
+		
+		projectRepository.delete(project);
 	}
 }
